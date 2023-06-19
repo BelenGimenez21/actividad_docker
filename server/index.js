@@ -1,10 +1,12 @@
 const express = require('express');
 const mariadb = require('mariadb');
+const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 3000;
-app.use(express.json())
+app.use(cors());
+app.use(express.json());
 
 const pool = mariadb.createPool({
   host: process.env.DB_HOST || 'localhost',
