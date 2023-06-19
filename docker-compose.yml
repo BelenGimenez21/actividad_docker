@@ -1,0 +1,58 @@
+version: '3'
+
+services:
+  # nombre del servio
+  database: 
+    # imagen a utilizar
+    image: mariadb:latest
+
+    # nombre del contenedor
+    container_name: my-database
+
+    # variables de entorno
+    environment:
+      MYSQL_ROOT_PASSWORD: mysecretpassword
+      MYSQL_DATABASE: productos
+      MYSQL_USER: root
+      MYSQL_PASSWORD: mysecretpassword
+
+    # mapeo de puertos
+    ports:
+      - 3306:3306
+
+    volumes:
+      - ./dbdata/mysql:/var/lib/mysql
+
+
+  servidor:
+    # nombre del contendor
+    container_name: express-server
+
+    # imagen a utilizar
+    build:
+      # carpeta donde se encuentra el codigo
+      context: ./server
+
+      # ubica el dockerfile
+      dockerfile: Dockerfile
+
+    # variables de entorno
+    environment:
+      DB_HOST: database
+      DB_USER: root
+      DB_PASSWORD: mysecretpassword
+      DB_NAME: productos
+
+    # si falla intenta reiniciarse
+    restart: always
+
+    # dependencias del contenedor
+    depends_on:
+      - database
+
+    # mapeo de puertos
+    ports:
+      - 3000:3000
+
+    volumes:
+      - ./server:/server
